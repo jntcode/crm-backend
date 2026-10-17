@@ -1,2 +1,0 @@
--- Seed data is managed by DataInitializer.java
--- This file is intentionally left minimal
