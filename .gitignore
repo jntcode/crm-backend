@@ -14,3 +14,17 @@ target/
 .DS_Store
 server.log
 startup.log
+
+# Local environment files (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Accidental Node artifacts (this is a Java/Maven repo)
+node_modules/
+package.json
+package-lock.json
+part1/
+
+# Accidental IDE artifacts
+zapp.yaml
