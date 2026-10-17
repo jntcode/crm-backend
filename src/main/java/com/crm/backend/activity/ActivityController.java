@@ -3,6 +3,7 @@ package com.crm.backend.activity;
 import com.crm.backend.auth.User;
 import com.crm.backend.auth.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/activities")
-@CrossOrigin(origins = "*")
 public class ActivityController {
     private final ActivityRepository activityRepository;
     private final UserRepository userRepository;
@@ -47,7 +47,7 @@ public class ActivityController {
     }
 
     @PostMapping
-    public ResponseEntity<ActivityDTO> createActivity(@RequestBody Activity activity) {
+    public ResponseEntity<ActivityDTO> createActivity(@Valid @RequestBody Activity activity) {
         Long userId = getCurrentUserId();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));

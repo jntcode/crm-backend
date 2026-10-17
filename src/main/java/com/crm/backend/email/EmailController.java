@@ -3,6 +3,7 @@ package com.crm.backend.email;
 import com.crm.backend.auth.User;
 import com.crm.backend.auth.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/emails")
-@CrossOrigin(origins = "*")
 public class EmailController {
     private final EmailRepository emailRepository;
     private final UserRepository userRepository;
@@ -57,7 +57,7 @@ public class EmailController {
     }
 
     @PostMapping
-    public ResponseEntity<EmailDTO> createEmail(@RequestBody Email email) {
+    public ResponseEntity<EmailDTO> createEmail(@Valid @RequestBody Email email) {
         Long userId = getCurrentUserId();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));

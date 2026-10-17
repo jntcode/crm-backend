@@ -3,6 +3,7 @@ package com.crm.backend.task;
 import com.crm.backend.auth.User;
 import com.crm.backend.auth.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/tasks")
-@CrossOrigin(origins = "*")
 public class TaskController {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
@@ -57,7 +57,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskDTO> createTask(@RequestBody Task task) {
+    public ResponseEntity<TaskDTO> createTask(@Valid @RequestBody Task task) {
         Long userId = getCurrentUserId();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));

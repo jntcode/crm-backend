@@ -7,6 +7,7 @@ import com.crm.backend.company.CompanyRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +31,12 @@ public class CustomerService {
                 .collect(Collectors.toList());
     }
 
+    public Optional<CustomerDTO> findById(Long id, Long userId) {
+        return customerRepository.findById(id)
+                .filter(c -> c.getUser().getId().equals(userId))
+                .map(CustomerDTO::fromEntity);
+    }
+
     public CustomerDTO createCustomer(CustomerDTO dto, Long userId) {
         Customer customer = new Customer();
         customer.setName(dto.getName());
@@ -42,6 +49,7 @@ public class CustomerService {
 
         if (dto.getCompanyId() != null) {
             Company company = companyRepository.findById(dto.getCompanyId())
+                    .filter(c -> c.getUser().getId().equals(userId))
                     .orElseThrow(() -> new EntityNotFoundException("Company not found"));
             customer.setCompany(company);
             customer.setCompanyName(company.getName());
@@ -57,11 +65,8 @@ public class CustomerService {
 
     public CustomerDTO updateCustomer(Long id, CustomerDTO dto, Long userId) {
         Customer customer = customerRepository.findById(id)
+                .filter(c -> c.getUser().getId().equals(userId))
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
-
-        if (!customer.getUser().getId().equals(userId)) {
-            throw new org.springframework.security.access.AccessDeniedException("Not authorized");
-        }
 
         customer.setName(dto.getName());
         customer.setEmail(dto.getEmail());
@@ -73,6 +78,7 @@ public class CustomerService {
 
         if (dto.getCompanyId() != null) {
             Company company = companyRepository.findById(dto.getCompanyId())
+                    .filter(c -> c.getUser().getId().equals(userId))
                     .orElseThrow(() -> new EntityNotFoundException("Company not found"));
             customer.setCompany(company);
             customer.setCompanyName(company.getName());
@@ -86,11 +92,8 @@ public class CustomerService {
 
     public void deleteCustomer(Long id, Long userId) {
         Customer customer = customerRepository.findById(id)
+                .filter(c -> c.getUser().getId().equals(userId))
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
-
-        if (!customer.getUser().getId().equals(userId)) {
-            throw new org.springframework.security.access.AccessDeniedException("Not authorized");
-        }
 
         customerRepository.deleteById(id);
     }

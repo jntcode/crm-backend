@@ -2,6 +2,8 @@ package com.crm.backend.activity;
 
 import com.crm.backend.auth.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,15 +13,18 @@ public class Activity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "customerId is required")
     @Column(nullable = false)
     private String customerId;
 
+    @NotBlank(message = "Title is required")
     @Column(nullable = false)
     private String title;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @NotNull(message = "Type is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ActivityType type;

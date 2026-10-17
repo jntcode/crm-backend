@@ -2,6 +2,7 @@ package com.crm.backend.email;
 
 import com.crm.backend.auth.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,15 +15,18 @@ public class Email {
     @Column(nullable = false)
     private String customerId;
 
+    @NotBlank(message = "Subject is required")
     @Column(nullable = false)
     private String subject;
 
     @Column(columnDefinition = "TEXT")
     private String body;
 
+    @NotBlank(message = "From address is required")
     @Column(nullable = false)
     private String fromAddress;
 
+    @NotBlank(message = "To address is required")
     @Column(nullable = false)
     private String toAddress;
 

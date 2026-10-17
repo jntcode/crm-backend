@@ -2,6 +2,7 @@ package com.crm.backend.task;
 
 import com.crm.backend.auth.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,6 +12,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Title is required")
     @Column(nullable = false)
     private String title;
 
@@ -25,6 +27,7 @@ public class Task {
     @Column(nullable = false)
     private TaskPriority priority = TaskPriority.MEDIUM;
 
+    @NotBlank(message = "customerId is required")
     @Column(nullable = false)
     private String customerId;
 
