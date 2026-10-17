@@ -1,5 +1,6 @@
 package com.crm.backend.auth;
 
+import com.crm.backend.common.EmailAlreadyExistsException;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -32,7 +33,7 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already registered");
+            throw new EmailAlreadyExistsException("Email already registered");
         }
 
         User user = new User();
@@ -56,6 +57,29 @@ public class AuthService {
 
         String token = jwtService.generateToken(user);
         return new AuthResponse(token, user.getName(), user.getEmail());
+    }
+
+    public AuthResponse updateProfile(User current, ProfileUpdateRequest request) {
+        if (!current.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
+            throw new EmailAlreadyExistsException("Email already registered");
+        }
+
+        current.setName(request.getName());
+        current.setEmail(request.getEmail());
+        userRepository.save(current);
+
+        // Issue a fresh token so the JWT subject stays in sync with a changed email.
+        String token = jwtService.generateToken(current);
+        return new AuthResponse(token, current.getName(), current.getEmail());
+    }
+
+    public void changePassword(User current, PasswordChangeRequest request) {
+        if (!passwordEncoder.matches(request.getCurrentPassword(), current.getPassword())) {
+            throw new org.springframework.security.access.AccessDeniedException("Current password is incorrect");
+        }
+
+        current.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(current);
     }
 
     public AuthResponse googleLogin(GoogleAuthRequest request) {
